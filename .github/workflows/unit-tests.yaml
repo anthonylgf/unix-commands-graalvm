@@ -5,8 +5,11 @@ on:
 
 jobs:
   unit-tests-linux:
-    name: Unit Tests Linux
-    runs-on: ubuntu-latest
+    name: Unit Tests on Linux ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ macos-latest, windows-latest, ubuntu-latest ]
     steps:
       - uses: actions/checkout@v4
       - uses: graalvm/setup-graalvm@v1
