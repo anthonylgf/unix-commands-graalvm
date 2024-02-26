@@ -4,8 +4,8 @@ on:
     branches: [ main ]
 
 jobs:
-  unit-tests-linux:
-    name: Unit Tests on ${{ matrix.os }}
+  unit-tests-native:
+    name: Native - Unit Tests on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -21,7 +21,28 @@ jobs:
           gradle wrapper
       - name: Run Junit Test - Java
         run: |
-          ./gradlew test
+          ./gradlew nativeCompile
       - name: Run Junit Test - Native
         run: |
           ./gradlew nativeTest
+  unit-tests-java:
+    name: JVM - Unit Tests on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ windows-latest, ubuntu-latest, macos-latest ]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '21'
+          distribution: 'graalvm'
+      - name: Generate gradlew wrapper
+        run: |
+          gradle wrapper
+      - name: Run Junit Test - Java
+        run: |
+          ./gradlew build
+      - name: Run Junit Test - Native
+        run: |
+          ./gradlew test
