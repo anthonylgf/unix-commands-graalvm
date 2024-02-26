@@ -11,8 +11,6 @@ plugins {
 def mainClassPath = "unix.commands.graalvm.cat.Cat"
 def javaVersion = project.findProperty('projectJavaVersion') as Integer
 
-println(javaVersion)
-
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
