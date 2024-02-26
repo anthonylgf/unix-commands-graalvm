@@ -1,0 +1,47 @@
+plugins {
+    // Apply the application plugin to add support for building a CLI application in Java.
+    id 'application'
+
+    // Apply the Java plugin to add support GraalVM native image building.
+    id 'org.graalvm.buildtools.native' version '0.10.1'
+}
+
+repositories {
+    // Use Maven Central for resolving dependencies.
+    mavenCentral()
+}
+
+dependencies {
+    // Use JUnit Jupiter for testing.
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
+}
+
+application {
+    // Define the main class for the application.
+    mainClass = 'unix.commands.graalvm.App'
+}
+
+tasks.named('test') {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
+}
+
+graalvmNative {
+    binaries {
+        main {
+            imageName = "cat"
+            mainClass = "unix.commands.graalvm.cat.Cat"
+            buildArgs.add("-O2")
+            javaLauncher = javaToolchains.launcherFor {
+                languageVersion = JavaLanguageVersion.of(21)
+                vendor = JvmVendorSpec.matching("Oracle Corporation")
+            }
+        }
+        test {
+            buildArgs.add("-O0")
+        }
+    }
+    binaries.configureEach {
+        buildArgs.add("--verbose")
+    }
+}
