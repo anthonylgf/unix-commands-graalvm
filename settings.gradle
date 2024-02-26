@@ -8,4 +8,4 @@
  */
 
 rootProject.name = 'unix-commands-graalvm'
-include('app')
+include('cat')
