@@ -5,11 +5,17 @@ plugins {
     // Apply the Java plugin to add support GraalVM native image building.
     id 'org.graalvm.buildtools.native'
 
+    // Plugins to ensure code quality
     id 'checkstyle'
+    id 'pmd'
+    id "com.github.spotbugs"
 }
 
-def mainClassPath = "unix.commands.graalvm.cat.Cat"
+/////////////////////////// VARIABLES /////////////////////////////////////////
+def mainClassPath = 'unix.commands.graalvm.cat.Cat'
 def javaVersion = project.findProperty('projectJavaVersion') as Integer
+def pmdThreadsQty = project.findProperty('pmdThreadsQty') as Integer
+///////////////////////////////////////////////////////////////////////////////
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -58,4 +64,15 @@ graalvmNative {
 
 checkstyle {
     toolVersion = qualityLibs.versions.checkstyle.get()
+}
+
+pmd {
+    consoleOutput = false
+    toolVersion = qualityLibs.versions.pmd.get()
+    ignoreFailures = true
+    ruleSets = ["category/java/errorprone.xml",
+                "category/java/bestpractices.xml",
+                "category/java/performance.xml",
+                "category/java/security.xml"]
+    threads = pmdThreadsQty
 }
