@@ -1,0 +1,21 @@
+name: Unit Tests (JUnit 5)
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  Unit Tests Linux:
+    name: Unit Tests Linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '21'
+          distribution: 'graalvm'
+      - name: Run Junit Test - Java
+        run: |
+          ./gradlew test
+      - name: Run Junit Test - Native
+        run: |
+          ./gradlew nativeTest
