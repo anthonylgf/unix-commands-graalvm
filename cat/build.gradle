@@ -13,15 +13,16 @@ repositories {
 
 dependencies {
     // Use JUnit Jupiter for testing.
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
 }
 
 application {
     // Define the main class for the application.
-    mainClass = 'unix.commands.graalvm.App'
+    mainClass = 'unix.commands.graalvm.cat.Cat'
 }
 
-tasks.named('test') {
+test {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
@@ -39,6 +40,10 @@ graalvmNative {
         }
         test {
             buildArgs.add("-O0")
+            javaLauncher = javaToolchains.launcherFor {
+                languageVersion = JavaLanguageVersion.of(21)
+                vendor = JvmVendorSpec.matching("Oracle Corporation")
+            }
         }
     }
     binaries.configureEach {
