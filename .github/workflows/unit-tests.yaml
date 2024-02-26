@@ -1,4 +1,4 @@
-name: Unit Tests (JUnit 5)
+name: Unit Tests
 on:
   pull_request:
     branches: [ main ]
@@ -19,7 +19,7 @@ jobs:
       - name: Generate gradlew wrapper
         run: |
           gradle wrapper
-      - name: Run Junit Test - Java
+      - name: Compile project
         run: |
           ./gradlew nativeCompile
       - name: Run Junit Test - Native
@@ -40,9 +40,9 @@ jobs:
       - name: Generate gradlew wrapper
         run: |
           gradle wrapper
-      - name: Run Junit Test - Java
+      - name: Compile project
         run: |
           ./gradlew build
-      - name: Run Junit Test - Native
+      - name: Run Junit Test
         run: |
           ./gradlew test
