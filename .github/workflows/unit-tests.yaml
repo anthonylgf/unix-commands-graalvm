@@ -13,6 +13,9 @@ jobs:
         with:
           java-version: '21'
           distribution: 'graalvm'
+      - name: Generate gradlew wrapper
+        run: |
+          gradle wrapper
       - name: Run Junit Test - Java
         run: |
           ./gradlew test
