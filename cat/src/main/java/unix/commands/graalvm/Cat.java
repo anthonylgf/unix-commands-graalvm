@@ -1,4 +1,4 @@
-package unix.commands.graalvm.cat;
+package unix.commands.graalvm;
 
 public class Cat {
     public String getGreeting() {

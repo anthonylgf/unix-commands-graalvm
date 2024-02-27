@@ -1,0 +1,74 @@
+plugins {
+    // Apply the Java plugin to add support GraalVM native image building.
+    id 'org.graalvm.buildtools.native'
+
+    // Plugins to ensure code quality
+    id 'checkstyle'
+    id 'pmd'
+    id "com.github.spotbugs"
+}
+
+group = 'unix.commands.graalvm'
+version = project.findProperty('projectVersion')
+
+def pmdThreadsQty = project.findProperty('pmdThreadsQty') as Integer
+
+repositories {
+    // Use Maven Central for resolving dependencies.
+    mavenCentral()
+}
+
+dependencies {
+    // Use JUnit Jupiter for testing.
+    testImplementation(testingLibs.junit.jupiter)
+    testRuntimeOnly(testingLibs.junit.engine)
+}
+
+
+checkstyle {
+    toolVersion = qualityLibs.versions.checkstyle.get()
+}
+
+pmd {
+    consoleOutput = false
+    toolVersion = qualityLibs.versions.pmd.get()
+    ignoreFailures = true
+    ruleSets = ["category/java/errorprone.xml",
+                "category/java/bestpractices.xml",
+                "category/java/performance.xml",
+                "category/java/security.xml"]
+    threads = pmdThreadsQty
+}
+
+test {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
+}
+
+ext {
+
+}
+
+graalvmNative {
+    binaries {
+        main {
+            imageName = project.name
+            mainClass = 'unix.commands.graalvm.' + project.name.capitalize()
+            buildArgs.add("-O2")
+            javaLauncher = javaToolchains.launcherFor {
+                languageVersion = JavaLanguageVersion.of(projectJavaVersion)
+                vendor = JvmVendorSpec.matching("Oracle Corporation")
+            }
+        }
+        test {
+            buildArgs.add("-O0")
+            javaLauncher = javaToolchains.launcherFor {
+                languageVersion = JavaLanguageVersion.of(projectJavaVersion)
+                vendor = JvmVendorSpec.matching("Oracle Corporation")
+            }
+        }
+    }
+    binaries.configureEach {
+        buildArgs.add("--verbose")
+    }
+}
