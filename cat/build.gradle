@@ -3,8 +3,19 @@ plugins {
     id 'application'
 
     // Apply the Java plugin to add support GraalVM native image building.
-    id 'org.graalvm.buildtools.native' version '0.10.1'
+    id 'org.graalvm.buildtools.native'
+
+    // Plugins to ensure code quality
+    id 'checkstyle'
+    id 'pmd'
+    id "com.github.spotbugs"
 }
+
+/////////////////////////// VARIABLES /////////////////////////////////////////
+def mainClassPath = 'unix.commands.graalvm.cat.Cat'
+def javaVersion = project.findProperty('projectJavaVersion') as Integer
+def pmdThreadsQty = project.findProperty('pmdThreadsQty') as Integer
+///////////////////////////////////////////////////////////////////////////////
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -13,13 +24,13 @@ repositories {
 
 dependencies {
     // Use JUnit Jupiter for testing.
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+    testImplementation(testingLibs.junit.jupiter)
+    testRuntimeOnly(testingLibs.junit.engine)
 }
 
 application {
     // Define the main class for the application.
-    mainClass = 'unix.commands.graalvm.cat.Cat'
+    mainClass = mainClassPath
 }
 
 test {
@@ -31,17 +42,17 @@ graalvmNative {
     binaries {
         main {
             imageName = "cat"
-            mainClass = "unix.commands.graalvm.cat.Cat"
+            mainClass = mainClassPath
             buildArgs.add("-O2")
             javaLauncher = javaToolchains.launcherFor {
-                languageVersion = JavaLanguageVersion.of(21)
+                languageVersion = JavaLanguageVersion.of(javaVersion)
                 vendor = JvmVendorSpec.matching("Oracle Corporation")
             }
         }
         test {
             buildArgs.add("-O0")
             javaLauncher = javaToolchains.launcherFor {
-                languageVersion = JavaLanguageVersion.of(21)
+                languageVersion = JavaLanguageVersion.of(javaVersion)
                 vendor = JvmVendorSpec.matching("Oracle Corporation")
             }
         }
@@ -49,4 +60,19 @@ graalvmNative {
     binaries.configureEach {
         buildArgs.add("--verbose")
     }
+}
+
+checkstyle {
+    toolVersion = qualityLibs.versions.checkstyle.get()
+}
+
+pmd {
+    consoleOutput = false
+    toolVersion = qualityLibs.versions.pmd.get()
+    ignoreFailures = true
+    ruleSets = ["category/java/errorprone.xml",
+                "category/java/bestpractices.xml",
+                "category/java/performance.xml",
+                "category/java/security.xml"]
+    threads = pmdThreadsQty
 }
