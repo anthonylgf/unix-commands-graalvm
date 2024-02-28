@@ -8,6 +8,9 @@ dependencyResolutionManagement {
             library('junit-jupiter', 'org.junit.jupiter:junit-jupiter:5.10.2')
             library('junit-engine', 'org.junit.jupiter:junit-jupiter-engine:5.10.2')
         }
+        'generalLibs' {
+            library('guava', 'com.google.guava:guava:33.0.0-jre')
+        }
     }
 }
 
