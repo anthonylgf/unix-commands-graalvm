@@ -1,4 +1,4 @@
-package unix.commands.graalvm.cat;
+package unix.commands.graalvm;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
